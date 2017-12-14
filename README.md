@@ -26,3 +26,6 @@ Copy the `sample.env` file to `.env`. Replace the dummy values for `EMAIL` and `
 The `Dockerfile` and `docker-compose.yml` files need no modification.
 
 It’s unnecessary to expose port 443 because the `nginx-proxy` is taking care of that for us. Spin up the static site with `docker-compose up`. The `nginx-proxy` container automatically serves the page. The `letsencrypt-companion` container automatically creates a certificate and renews it. Incredible.
+
+### Test it
+Go to Qualys's [SSL Labs](https://www.ssllabs.com/ssltest) site and test your domain's security. A+
