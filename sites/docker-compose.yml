@@ -1,14 +1,16 @@
----
-web:
-  build: .
-  container_name: "${VIRTUAL_HOST}"
-  environment:
-    - "LETSENCRYPT_EMAIL=${EMAIL}"
-    - "LETSENCRYPT_HOST=${VIRTUAL_HOST}"
-    - "VIRTUAL_HOST=${VIRTUAL_HOST}"
-  expose:
-    - "80"
-  network_mode: bridge
-  restart: always
-  volumes:
-    - "./web:/usr/share/nginx/html"
+version: '2'
+services:
+  web:
+    image: nginx:stable-alpine
+    container_name: "${VIRTUAL_HOST}"
+    environment:
+      - "VIRTUAL_HOST=${VIRTUAL_HOST}"
+      - "LETSENCRYPT_HOST=${VIRTUAL_HOST}"
+      - "LETSENCRYPT_EMAIL=${EMAIL}"
+    expose:
+      - "80"
+    volumes:
+      - "./web:/usr/share/nginx/html"
+    network_mode: bridge
+
+
