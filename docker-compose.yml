@@ -1,0 +1,14 @@
+---
+web:
+  build: .
+  container_name: "${VIRTUAL_HOST}"
+  environment:
+    - "VIRTUAL_HOST=${VIRTUAL_HOST}"
+    - "LETSENCRYPT_HOST=${VIRTUAL_HOST}"
+    - "LETSENCRYPT_EMAIL=${EMAIL}"
+  expose:
+    - "80"
+  volumes:
+    - "./web:/usr/share/nginx/html"
+  restart: always
+
