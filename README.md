@@ -37,7 +37,7 @@ cd webserver
 
 ## Step 2. Customize with your domain and email
 Each `./site/site*` folder represents a website. Rename or copy the `site`
-folders to represent each site you want to serve. For example, if you're serving
+folders for each site you want to serve. For example, if you're serving
 three sites, you might do this:
 
 ```sh
@@ -47,7 +47,7 @@ mv site/site2 anotherexample.com
 ```
 
 Each `site` folder contains a `sample.env` file. Copy each of those to a real
-`.env` file. To prevent inadvertent publication of any secrets, the `.gitgnore`
+`.env` file. To prevent inadvertent publication of any secrets, the `.gitignore`
 file for this repo ignores `.env`.
 
 In each `.env` file, customize the `VIRTUAL_HOST` variable with your domain and
