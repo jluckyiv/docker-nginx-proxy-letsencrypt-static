@@ -1,31 +1,78 @@
 # Creating a static site with Docker and Let's Encrypt
 This repo leverages Docker and two related projects:
 
-  - [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
-  - [jrcs/letsencrypt-nginx-proxy-companion](https://github.com/jrcs/letsencrypt-nginx-proxy-companion)
+- [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
+- [jrcs/letsencrypt-nginx-proxy-companion](https://github.com/jrcs/letsencrypt-nginx-proxy-companion)
 
-The combination makes creating a secure static site trivial.
+The `nginx-proxy` project automates [Nginx](http://nginx.org/en/docs/) setup as
+a reverse proxy for websites. When the `nginx-proxy` container is started, it
+will automatically create an Nginx configuration file and reverse proxy for any
+container with an exposed port and create a reverse proxy for it.
 
-## Step 1, nginx-proxy and Let’s Encrypt
-I created a shell script to start the Nginx proxy and the Let's Encrypt automation. Running this script on the Docker host is all that’s needed to get everything up and running. I'm figuring out how to turn the shell scripts into a `docker.compose.yml` file. Just run `./start.sh` to spin them up.
+The `lets-encrypt-nginx-proxy-companion` container will automatically configure
+a [Let's Encrypt](https://letsencrypt.org) certificate to secure the sites
+served. Other than providing the site's domain and an email address, there is no
+configuration required.
 
-Use `./stop.sh` to stop the containers and remove them, because you can’t add the `--rm` flag with a `--restart` flag.
+This repo provides a few scripts and `docker-compose.yml` files. Deploying a
+secure website requires cloning the repo, providing your email address and a
+domain for each site to be served, and starting the containers. Everything else
+is automated. After they're up and running, copy your static assets to the `web`
+folder of each `site`.
 
-## Step 2, Set up a static site
-Each site will be in its own folder. Name the folder with the site’s domain. Almost done. Really.
+The repo includes scripts to start, stop, and take down all the containers.
 
-The only customization necessary is copying the static assets and setting two environment variables.
+## Requirements
+This repo requires a server properly configured with Git and
+[Docker](https://docs.docker.com/get-started/), with ports 80 and 443 open. It
+also requires a domain name with properly configured DNS.
 
-### Copy the static assets
-Put all your static assets in `web`. This folder will be mounted as a volume, which means modifying its contents will not require a rebuild of the Docker image.
+## Step 1. Clone the repo
+Clone this repo into a `webserver` folder on your server and `cd` into it.
 
-### Create a `.env` file
-Copy the `sample.env` file to `.env`. Replace the dummy values for `EMAIL` and `VIRTUAL_HOST`.
+```sh
+git clone https://jluckyiv/docker-nginx-proxy-letsencrypt-static webserver
+cd webserver
+```
 
-### The `Dockerfile` and `docker-compose.yml` file
-The `Dockerfile` and `docker-compose.yml` files need no modification.
+## Step 2. Customize with your domain and email
+Each `./site/site*` folder represents a website. Rename or copy the `site`
+folders to represent each site you want to serve. For example, if you're serving
+three sites, you might do this:
 
-It’s unnecessary to expose port 443 because the `nginx-proxy` is taking care of that for us. Spin up the static site with `docker-compose up`. The `nginx-proxy` container automatically serves the page. The `letsencrypt-companion` container automatically creates a certificate and renews it. Incredible.
+```sh
+mv site/site1 first.example.com
+cp -r site/site2 second.example.com
+mv site/site2 anotherexample.com
+```
 
-### Test it
-Go to Qualys's [SSL Labs](https://www.ssllabs.com/ssltest) site and test your domain's security. A+
+Each `site` folder contains a `sample.env` file. Copy each of those to a real
+`.env` file. To prevent inadvertent publication of any secrets, the `.gitgnore`
+file for this repo ignores `.env`.
+
+In each `.env` file, customize the `VIRTUAL_HOST` variable with your domain and
+the `EMAIL` variable with your email.
+
+The `docker-compose.yml` files need no modification. It’s unnecessary to expose
+port 443 on individual sites because `nginx-proxy` is exposing ports 80 and 443.
+
+## Step 3 Start the servers
+Go to the root `webserver` folder and execute the following scripts. You might
+need to `chmod +x *.sh` before you do.
+
+```
+./proxy_up.sh # starts nginx-proxy and letsencrypt-companion containers
+./sites_up.sh # starts all website containers
+```
+
+That's it. Your websites are up and in a few seconds, each will have a Let's
+Encrypt certificate.
+
+## Test it
+Go to Qualys's [SSL Labs](https://www.ssllabs.com/ssltest) site and test your domain's security: A+
+
+## Copy static assets
+Now that your sites are up and running, copy your static assets into the `web`
+folder of the appropriate site. The `web` folders are mounted as volumes, so
+changes within the `web` folder are served without restarting or rebuilding the
+site container.
