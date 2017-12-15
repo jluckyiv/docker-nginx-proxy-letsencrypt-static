@@ -22,6 +22,9 @@ folder of each `site`.
 
 The repo includes scripts to start, stop, and take down all the containers.
 
+You can run a web application as well. See the instructions at the end of this
+README.
+
 ## Requirements
 This repo requires a server properly configured with Git and
 [Docker](https://docs.docker.com/get-started/), with ports 80 and 443 open. It
@@ -76,3 +79,16 @@ Now that your sites are up and running, copy your static assets into the `web`
 folder of the appropriate site. The `web` folders are mounted as volumes, so
 changes within the `web` folder are served without restarting or rebuilding the
 site container.
+
+## Custom web applications
+This scaffold can serve any web app, as long as it meets a few requirements.
+
+1. The site must be inside a subfolder of `/.sites/`.
+2. The site must have a `docker-compose.yml` file in its root folder.
+3. The `docker-compose.yml` file must `expose` a port (any port).
+4. The `docker-compose.yml` file must include `network_mode: bridge`.
+5. The `environment` block in `docker-compose.yml` must set three variables:
+   - `VIRTUAL_HOST`
+   - `LETSENCRYPT_HOST`
+   - `LETSENCRYPT_EMAIL`
+   The two `*HOST` variables should have the same value.
