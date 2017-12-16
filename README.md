@@ -34,7 +34,7 @@ also requires a domain name with properly configured DNS.
 Clone this repo into a `webserver` folder on your server and `cd` into it.
 
 ```sh
-git clone https://jluckyiv/docker-nginx-proxy-letsencrypt-static webserver
+git clone https://github.com/jluckyiv/docker-nginx-proxy-letsencrypt-static webserver
 cd webserver
 ```
 
