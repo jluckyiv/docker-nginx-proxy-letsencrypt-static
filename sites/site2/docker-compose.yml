@@ -12,3 +12,4 @@ services:
     volumes:
       - "./web:/usr/share/nginx/html"
     network_mode: bridge
+    restart: always
